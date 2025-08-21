@@ -37,6 +37,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap">
+    <script>
+      // Ensure Inter font is loaded
+      if (document.fonts) {
+        document.fonts.ready.then(() => {
+          document.documentElement.style.fontFamily = "'Inter', sans-serif";
+        });
+      }
+    </script>
     <style>
       body {
         font-family: 'Inter', sans-serif !important;
@@ -88,20 +96,23 @@
     </header>
 
     <main id="main-content">
-        <section id="hero-section" class="bg-gradient-to-b from-white via-neutral-50/30 to-white py-20 md:py-32 h-[900px] relative overflow-hidden">
+        <section id="hero-section" class="bg-gradient-to-b from-white via-neutral-50/30 to-white py-20 md:py-32 h-[900px] relative overflow-hidden" style="--wipe-bg: #fff;">
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.02),transparent_50%)]"></div>
             <div class="absolute top-20 left-1/4 w-64 h-64 bg-neutral-200/20 rounded-full blur-3xl"></div>
             <div class="absolute bottom-20 right-1/4 w-96 h-96 bg-neutral-300/20 rounded-full blur-3xl"></div>
             
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-                <div class="inline-flex items-center px-4 py-2 rounded-full bg-neutral-100 border border-neutral-200 text-neutral-700 text-sm mb-8">
-                    <i class="fa-solid fa-sparkles mr-2"></i>
-                    Discover top researchers instantly
-                </div>
-                
-                <h1 class="text-5xl md:text-7xl tracking-tight text-neutral-900 leading-tight">
-                    Find Your Next<br>
-                    <span class="bg-gradient-to-r from-neutral-700 to-neutral-900 bg-clip-text text-transparent">Research Opportunity</span>
+                <h1 class="hero">
+                    <span class="hero-line">
+                        <span class="hero-word">Find Your Next</span>
+                    </span><br>
+                    <span class="hero-line">
+                        <span class="hero-word">Research</span>
+                        <span class="rotate" aria-live="polite" aria-atomic="false" data-words='["Position","Topic","Grant","Opportunity"]'>
+                            <span class="rotate__inner">Position</span>
+                            <span class="rotate__wipe" aria-hidden="true"></span>
+                        </span>
+                    </span>
                 </h1>
                 
                 <p class="mt-6 max-w-2xl mx-auto text-xl text-neutral-600 leading-relaxed">
@@ -378,6 +389,309 @@
     </footer>
 
 </div>
+
+<style>
+/* CSS Variables for customization */
+:root {
+    --wipe-duration: 0.85s;
+    --hold: 1.2s;
+    --rotate-min-width: 6ch;
+}
+
+/* Hero headline styles */
+.hero {
+    font-size: 3rem; /* text-5xl */
+    line-height: 1.25; /* leading-tight */
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    color: #171717; /* text-neutral-900 */
+    text-align: left; /* Changed to left align */
+    margin: 0;
+    letter-spacing: -0.025em; /* tracking-tight */
+    display: block; /* Changed to block for proper alignment */
+    max-width: fit-content; /* Allow natural width */
+    margin-left: auto; /* Center the block */
+    margin-right: auto; /* Center the block */
+    transform: translateX(2em); /* Move the entire block to the right to center it visually */
+}
+
+@media (min-width: 768px) {
+    .hero {
+        font-size: 4.5rem; /* md:text-7xl */
+    }
+}
+
+/* The line that holds "research" + rotating word */
+.hero-line {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.08em;
+    min-height: 1.2em; /* Ensure consistent height */
+    justify-content: flex-start; /* Align to the left so "research" aligns with "Find" */
+    font-family: 'Inter', sans-serif;
+}
+
+/* Make sure both words share identical typography */
+.hero-word,
+.rotate__inner {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    line-height: 1;
+}
+
+/* Rotating word container */
+.rotate {
+    display: inline-block;
+    position: relative;
+    isolation: isolate;
+    white-space: nowrap;
+    vertical-align: baseline;
+    overflow: hidden;
+    text-align: left;
+    width: var(--rotate-width);
+    min-width: 10ch; /* Increased minimum width to accommodate "opportunity" */
+    padding-left: 0.08em;
+    margin-left: 0.04em;
+    transform: none;
+}
+
+/* Inner text with gradient */
+.rotate__inner {
+    display: inline-block;
+    background: linear-gradient(90deg, #7c3aed, #22d3ee, #f59e0b);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: drift 12s linear infinite;
+    will-change: background-position;
+    line-height: 1;
+}
+
+/* Wipe overlay */
+.rotate__wipe {
+    position: absolute;
+    inset: 0;
+    background: var(--wipe-bg, #fff);
+    transform: translateX(-100%) translateZ(0);
+    pointer-events: none;
+    z-index: 2;
+    border-radius: 0.08em;
+}
+
+/* Start the wipe when parent gets the class */
+.rotate.is-wiping .rotate__wipe {
+    animation: wipe-in-out var(--wipe-duration) cubic-bezier(.22,.61,.36,1) forwards;
+    will-change: transform;
+}
+
+/* Gradient drift animation */
+@keyframes drift {
+    to {
+        background-position: 200% 0;
+    }
+}
+
+/* Wipe slides in (cover), then slides out (reveal) */
+@keyframes wipe-in-out {
+    0% {
+        transform: translateX(-100%);
+    }
+    45% {
+        transform: translateX(0%);
+    }
+    55% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .rotate__inner {
+        animation: none;
+    }
+    
+    .rotate.is-wiping .rotate__wipe {
+        animation: none;
+    }
+}
+
+/* Nice focus ring if you make it interactive later */
+.rotate:focus-visible {
+    outline: 2px dashed #22d3ee;
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+/* Safari-specific baseline adjustment if needed */
+@supports (-webkit-touch-callout: none) {
+    .rotate {
+        transform: translateY(0.01em);
+    }
+}
+</style>
+
+<script>
+// Utility: wait for next animation frame
+const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+
+// Multi-instance initializer
+document.querySelectorAll('.rotate').forEach(initRotate);
+
+function initRotate(rotate) {
+    const inner = rotate.querySelector('.rotate__inner');
+    const wipe = rotate.querySelector('.rotate__wipe');
+
+    // Parse words from data attribute
+    let words;
+    try {
+        words = JSON.parse(rotate.getAttribute('data-words') || '[]');
+    } catch (e) {
+        words = [];
+    }
+    if (!Array.isArray(words) || words.length === 0) {
+        words = [inner.textContent.trim()];
+    }
+
+    // Set the exact width based on the longest word
+    function setWidestWidth() {
+        const measurer = document.createElement('span');
+        const cs = getComputedStyle(inner);
+        Object.assign(measurer.style, {
+            position: 'absolute',
+            left: '-9999px',
+            top: '0',
+            whiteSpace: 'nowrap',
+            font: cs.font,
+            fontWeight: cs.fontWeight,
+            letterSpacing: cs.letterSpacing,
+            paddingLeft: cs.paddingLeft,
+            marginLeft: cs.marginLeft,
+            fontSize: cs.fontSize,
+            fontFamily: cs.fontFamily
+        });
+        document.body.appendChild(measurer);
+
+        let max = 0;
+        (words.length ? words : [inner.textContent]).forEach(w => {
+            measurer.textContent = w;
+            const rect = measurer.getBoundingClientRect();
+            max = Math.max(max, rect.width);
+        });
+        measurer.remove();
+
+        // Add a larger buffer to ensure the longest word (opportunity) is fully visible
+        const px = Math.ceil(max) + 30;
+        rotate.style.setProperty('--rotate-width', px + 'px');
+        
+        // Force a reflow to ensure the width is applied
+        rotate.offsetHeight;
+    }
+
+    // Simple initialization
+    function initRotate() {
+        // Set initial word
+        inner.textContent = words[0];
+        // Measure and set width after a brief delay to ensure fonts are loaded
+        setTimeout(() => {
+            setWidestWidth();
+        }, 100);
+        
+        // Also measure again after a longer delay to ensure all fonts are definitely loaded
+        setTimeout(() => {
+            setWidestWidth();
+        }, 1000);
+    }
+
+    // Respect reduced motion with change listener
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let prefersReduced = mq.matches;
+    mq.addEventListener?.('change', e => { 
+        prefersReduced = e.matches; 
+    });
+
+    // Simple initialization
+    initRotate();
+    
+    // Re-measure on font load and resize
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => {
+            setWidestWidth();
+        });
+    } else {
+        // Fallback for browsers without font loading API
+        setTimeout(setWidestWidth, 500);
+    }
+    window.addEventListener('resize', setWidestWidth);
+
+    // Cycling logic
+    let index = 0;
+    let destroyed = false;
+
+    async function cycle() {
+        if (destroyed) return;
+
+        // Read CSS variables from the rotate element's computed style
+        const computedStyle = getComputedStyle(rotate);
+        const holdMs = parseFloat(computedStyle.getPropertyValue('--hold')) * 1000 || 1800;
+        const wipeDurationMs = parseFloat(computedStyle.getPropertyValue('--wipe-duration')) * 1000 || 850;
+
+        await new Promise(r => setTimeout(r, holdMs));
+
+        if (prefersReduced) {
+            // No wipe animation; just swap text
+            index = (index + 1) % words.length;
+            inner.textContent = words[index];
+            // Continue loop
+            cycle();
+            return;
+        }
+
+        // Trigger wipe animation
+        rotate.classList.add('is-wiping');
+
+        // Swap text at the midpoint of the wipe (40% cover, 60% reveal for better readability)
+        const midpoint = Math.round(wipeDurationMs * 0.5);
+        await new Promise(r => setTimeout(r, midpoint));
+
+        index = (index + 1) % words.length;
+        inner.textContent = words[index];
+
+        // Wait for the rest of the wipe to complete
+        await new Promise(r => setTimeout(r, wipeDurationMs - midpoint));
+
+        // Ensure animation class is cleared (in case animationend is missed)
+        rotate.classList.remove('is-wiping');
+
+        // One extra frame to avoid reflow jank before next cycle
+        await nextFrame();
+
+        cycle();
+    }
+
+    // Optional: also listen to animationend for robustness
+    wipe.addEventListener('animationend', () => {
+        rotate.classList.remove('is-wiping');
+    });
+
+    // Visibility pause for battery-friendly behavior
+    document.addEventListener('visibilitychange', () => {
+        destroyed = document.hidden;
+        if (!destroyed) cycle();
+    });
+
+    // Kick it off
+    cycle();
+
+    // Cleanup if the page is navigated in a SPA, etc.
+    window.addEventListener('beforeunload', () => {
+        destroyed = true;
+    });
+}
+</script>
 
 </body>
 </html>
